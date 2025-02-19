@@ -19,9 +19,11 @@ public class PlayerController : MonoBehaviour
     private float jumpStrength = 5.0f;
     private float limitY = -4.0f;
     public bool isOnGround = true;
+    private SpawnManager spawnManagerScript;
     [SerializeField] private TextMeshProUGUI gameOverText; // to show the game over
     [SerializeField] private Button restartButton;
     [SerializeField] public bool isGameActive;
+    [SerializeField] private TextMeshProUGUI waveNumberText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,6 +31,7 @@ public class PlayerController : MonoBehaviour
         playerRb = GetComponent<Rigidbody>();//to get the rigid body component
         focalPoint = GameObject.Find("Focal Point"); // we can use this, because it is in the same heirachy and scene    
         restartButton.onClick.AddListener(RestartGame); // to restart the game
+        spawnManagerScript = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         
     }
 
@@ -49,6 +52,7 @@ public class PlayerController : MonoBehaviour
             restartButton.gameObject.SetActive(true);
             isGameActive = false;// because the player lost
         }
+        waveNumberText.text = "Wave: " + spawnManagerScript.waveNumber;
     }
     private void OnTriggerEnter(Collider other) // we use the trigger when we want to understand something 
     {

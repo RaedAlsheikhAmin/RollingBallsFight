@@ -2,16 +2,18 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject enemyPrefab;
+    public GameObject[] enemyPrefab;
     public GameObject powerupPrefab;
     private float spawnRange = 9.0f;
     public int enemeyCount;
     public int waveNumber = 1; // to keep track of the waves
+    public int bossToSpawn;
     private PlayerController playerControllerScript;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        bossToSpawn = 0;
         SpawnEnemyWave(waveNumber);
         Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate a power up at the begging of the game
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>(); // to get the script of
@@ -37,10 +39,33 @@ public class SpawnManager : MonoBehaviour
     }
     private void SpawnEnemyWave(int enemiesToSpawn)
     {
-        for (int i = 0; i < enemiesToSpawn; i++) // that it spawnes enemies at the same time
+        if (enemiesToSpawn % 5 == 0) // condition to spawn a special enemy
         {
-            Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
+            bossToSpawn++;
+            for (int i = 0; i < enemiesToSpawn-bossToSpawn; i++) // that it spawnes enemies at the same time
+            {
+                int randomEnemyIndex = Random.Range(0, 2);
+                Instantiate(enemyPrefab[randomEnemyIndex], GenerateSpawnPosition(), enemyPrefab[randomEnemyIndex].transform.rotation);
 
+            }
+            SpawnBossEnemy(bossToSpawn);
         }
+        else
+        {
+            for (int i = 0; i < enemiesToSpawn; i++) // that it spawnes enemies at the same time
+            {
+                int randomEnemyIndex = Random.Range(0, 2);
+                Instantiate(enemyPrefab[randomEnemyIndex], GenerateSpawnPosition(), enemyPrefab[randomEnemyIndex].transform.rotation);
+
+            }
+        }
+    }
+    private void SpawnBossEnemy(int bossToSpawn)
+    {
+        for(int i = 0;i < bossToSpawn; i++)
+        {
+            Instantiate(enemyPrefab[2], GenerateSpawnPosition(), enemyPrefab[2].transform.rotation);
+        }
+        
     }
 }
