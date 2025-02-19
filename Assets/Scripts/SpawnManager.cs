@@ -14,7 +14,6 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         bossToSpawn = 0;
-        Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate a power up at the begging of the game
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>(); // to get the script of
     }
 
