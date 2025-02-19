@@ -24,12 +24,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] public bool isGameActive;
     [SerializeField] private TextMeshProUGUI waveNumberText;
+    [SerializeField] private Button startGameButton;
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI userNameLabel;
+    [SerializeField] private TMP_InputField userNameTextArea; // to get the input from the text area
+    [SerializeField] private TextMeshProUGUI userNameShowText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        isGameActive = true; // when the player starts the game
+        isGameActive = false;   
         playerRb = GetComponent<Rigidbody>();//to get the rigid body component
         focalPoint = GameObject.Find("Focal Point"); // we can use this, because it is in the same heirachy and scene    
+        restartButton.onClick.RemoveAllListeners(); // to get rid of all the listeners first
         restartButton.onClick.AddListener(RestartGame); // to restart the game
         spawnManagerScript = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         
@@ -38,21 +44,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float verticalInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(focalPoint.transform.forward * speed * verticalInput );// take the forward of the focal point will make sure that the player will move according to the camer position
-        powerupIndicator.transform.position = transform.position + offsetIndicator; // to make the indicator on the player
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+        if (isGameActive)
         {
-            playerRb.AddForce(focalPoint.transform.up * jumpStrength, ForceMode.Impulse);
-            isOnGround = false;
+            float verticalInput = Input.GetAxis("Vertical");
+            playerRb.AddForce(focalPoint.transform.forward * speed * verticalInput);// take the forward of the focal point will make sure that the player will move according to the camer position
+            powerupIndicator.transform.position = transform.position + offsetIndicator; // to make the indicator on the player
+            if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+            {
+                playerRb.AddForce(focalPoint.transform.up * jumpStrength, ForceMode.Impulse);
+                isOnGround = false;
+            }
+            if (transform.position.y < limitY)
+            {
+                gameOverText.gameObject.SetActive(true);
+                restartButton.gameObject.SetActive(true);
+                isGameActive = false;// because the player lost
+            }
+            waveNumberText.text = "Wave: " + spawnManagerScript.waveNumber;
         }
-        if(transform.position.y < limitY)
-        {
-            gameOverText.gameObject.SetActive(true);
-            restartButton.gameObject.SetActive(true);
-            isGameActive = false;// because the player lost
-        }
-        waveNumberText.text = "Wave: " + spawnManagerScript.waveNumber;
     }
     private void OnTriggerEnter(Collider other) // we use the trigger when we want to understand something 
     {
@@ -89,5 +98,17 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-         
+    public void StartGame()
+    {
+        isGameActive = true; // when the player starts the game
+        startGameButton.gameObject.SetActive(false );
+        titleText.gameObject.SetActive(false );
+        userNameLabel.gameObject.SetActive(false );
+        string userName = userNameTextArea.text;
+        userNameShowText.text = userName;
+        userNameTextArea.gameObject.SetActive(false );
+
+    }
+   
+
 }

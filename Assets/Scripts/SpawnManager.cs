@@ -6,7 +6,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject powerupPrefab;
     private float spawnRange = 9.0f;
     public int enemeyCount;
-    public int waveNumber = 1; // to keep track of the waves
+    public int waveNumber; // to keep track of the waves
     public int bossToSpawn;
     private PlayerController playerControllerScript;
 
@@ -14,7 +14,6 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         bossToSpawn = 0;
-        SpawnEnemyWave(waveNumber);
         Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate a power up at the begging of the game
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>(); // to get the script of
     }
@@ -39,7 +38,7 @@ public class SpawnManager : MonoBehaviour
     }
     private void SpawnEnemyWave(int enemiesToSpawn)
     {
-        if (enemiesToSpawn % 5 == 0) // condition to spawn a special enemy
+        if (enemiesToSpawn % 5 == 0 && waveNumber!=0) // condition to spawn a special enemy
         {
             bossToSpawn++;
             for (int i = 0; i < enemiesToSpawn-bossToSpawn; i++) // that it spawnes enemies at the same time
