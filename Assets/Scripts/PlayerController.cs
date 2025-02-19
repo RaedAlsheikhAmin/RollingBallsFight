@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI userNameLabel;
     [SerializeField] private TMP_InputField userNameTextArea; // to get the input from the text area
     [SerializeField] private TextMeshProUGUI userNameShowText;
+    [SerializeField] private TextMeshProUGUI userNameErrorMessage;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -100,14 +101,22 @@ public class PlayerController : MonoBehaviour
     }
     public void StartGame()
     {
-        isGameActive = true; // when the player starts the game
-        startGameButton.gameObject.SetActive(false );
-        titleText.gameObject.SetActive(false );
-        userNameLabel.gameObject.SetActive(false );
-        string userName = userNameTextArea.text;
-        userNameShowText.text = userName;
-        userNameTextArea.gameObject.SetActive(false );
-
+        if (!string.IsNullOrWhiteSpace(userNameTextArea.text)) // Check if it's empty or spaces
+        {
+            isGameActive = true; // Game starts
+            startGameButton.gameObject.SetActive(false);
+            titleText.gameObject.SetActive(false);
+            userNameLabel.gameObject.SetActive(false);
+            string userName = userNameTextArea.text.Trim(); // Remove extra spaces
+            userNameShowText.text = userName;
+            userNameTextArea.gameObject.SetActive(false);
+            userNameErrorMessage.gameObject.SetActive(false);
+        }
+        else
+        {
+            userNameErrorMessage.gameObject.SetActive(true);
+            
+        }
     }
    
 

@@ -5,7 +5,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float speed ;
     private GameObject player;
     private Rigidbody enemyRb;
-    private float limitY = -4.0f;
+    private float limitY = -2.5f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
