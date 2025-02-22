@@ -7,6 +7,7 @@ TagManager:
   - Powerup
   - Enemy
   - Ground
+  - Nuclear
   layers:
   - Default
   - TransparentFX
