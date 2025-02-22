@@ -6,6 +6,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+//this line is important to test the Exit button while we are in the editor mode.
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -30,6 +35,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_InputField userNameTextArea; // to get the input from the text area
     [SerializeField] private TextMeshProUGUI userNameShowText;
     [SerializeField] private TextMeshProUGUI userNameErrorMessage;
+    [SerializeField] private Button exitGameButton;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -111,6 +117,7 @@ public class PlayerController : MonoBehaviour
             userNameShowText.text = userName;
             userNameTextArea.gameObject.SetActive(false);
             userNameErrorMessage.gameObject.SetActive(false);
+            exitGameButton.gameObject.SetActive(false);
         }
         else
         {
@@ -118,6 +125,14 @@ public class PlayerController : MonoBehaviour
             
         }
     }
-   
-
+    public void Exit()
+    {
+        //this is called conditonal compiling which uses # for the conditions, which will not be build during standalone player build.
+        #if UNITY_EDITOR
+            EditorApplication.ExitPlaymode();
+        #else
+            Application.Quit(); // original code to quit Unity player
+        #endif
+    }
 }
+
