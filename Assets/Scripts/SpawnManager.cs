@@ -1,14 +1,20 @@
+using System.Collections;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
     public GameObject[] enemyPrefab;
     public GameObject powerupPrefab;
+    public GameObject nuclearPrefab;
     private float spawnRange = 9.0f;
     public int enemeyCount;
     public int waveNumber; // to keep track of the waves
     public int bossToSpawn;
+    private float timeTogenerateNuclear = 0;
+    private bool canSpawn = true; // Controls whether enemies can spawn
     private PlayerController playerControllerScript;
+    
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -20,13 +26,31 @@ public class SpawnManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timeTogenerateNuclear += Time.deltaTime;
         enemeyCount = FindObjectsByType<Enemy>(FindObjectsSortMode.None).Length;// this will return an array of objects, and it uses a scripts as a type
-        if(enemeyCount == 0 && playerControllerScript.isGameActive) // no enemies left in the battle
+
+        if (playerControllerScript.isNuclearActive)
+        {
+            StartCoroutine(WaitNuclearActive()); // Pause spawning when nuclear is active
+        }
+        if (enemeyCount == 0 && playerControllerScript.isGameActive && canSpawn) // no enemies left in the battle
         {
             waveNumber++; // increase the enemies
             SpawnEnemyWave(waveNumber); //spawn the enemies based on the wave number
             Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate power up for each wave.
         }
+        else if (enemeyCount > 6 && playerControllerScript.isGameActive && timeTogenerateNuclear > 30.0 && canSpawn)
+        {
+            timeTogenerateNuclear = 0;
+            Instantiate(nuclearPrefab, GenerateSpawnPosition(), nuclearPrefab.transform.rotation); // to generate a power up
+            
+        }
+    }
+    IEnumerator WaitNuclearActive()
+    {
+        canSpawn = false;
+        yield return new WaitForSeconds(2);
+        canSpawn = true;
     }
     private Vector3 GenerateSpawnPosition()
     {

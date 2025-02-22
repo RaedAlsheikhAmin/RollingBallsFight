@@ -14,12 +14,13 @@ using UnityEditor;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 2.0f;
+    private float speed = 4.0f;
     private Rigidbody playerRb;
     private GameObject focalPoint; // to get a reference for the focal point
     public bool hasPowerup = false; // to check when it collides 
     private float powerupStrength = 15.0f;
     public GameObject powerupIndicator; // to get a reference
+    public GameObject nuclearIndicator; // to get the nuclear reference
     private Vector3 offsetIndicator = new Vector3(0,-0.5f,0); // to move the indicator down a little
     private float jumpStrength = 5.0f;
     private float limitY = -4.0f;
@@ -36,6 +37,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI userNameShowText;
     [SerializeField] private TextMeshProUGUI userNameErrorMessage;
     [SerializeField] private Button exitGameButton;
+    private Vector3 originalNuclearScale; //for the nuclear size
+    private float scaleUpSize = 20f; // The target size multiplier
+    private float scaleSpeed = 120f; // The speed of scaling
+    public bool isNuclearActive = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -45,7 +50,9 @@ public class PlayerController : MonoBehaviour
         restartButton.onClick.RemoveAllListeners(); // to get rid of all the listeners first
         restartButton.onClick.AddListener(RestartGame); // to restart the game
         spawnManagerScript = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
-        
+        originalNuclearScale = nuclearIndicator.transform.localScale; // to store the initial scale
+
+
     }
 
     // Update is called once per frame
@@ -79,7 +86,39 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
             StartCoroutine(PowerUpCountDownRoutine());// to start the thread, useful to get the time out of update method
         }
+        else if (other.gameObject.CompareTag("Nuclear"))
+        {
+            isNuclearActive = true;
+            nuclearIndicator.SetActive(true);
+            nuclearIndicator.transform.position = spawnManagerScript.nuclearPrefab.transform.position;// to make the indicator next to the nuclear
+            StartCoroutine(ScaleUpIndicator());// it will make the nuclear bigger
+            Destroy(other.gameObject); // destroy the Nuclear
+                                       
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");// Find all objects with the "Enemy" tag
+
+            // Destroy all enemies
+            foreach (GameObject enemy in enemies)
+            {
+                Destroy(enemy);
+            }
+        }
        
+    }
+    
+    IEnumerator ScaleUpIndicator() //for increasing the size of the indicator
+    {
+        nuclearIndicator.SetActive(true);
+        nuclearIndicator.transform.localScale = originalNuclearScale; // Reset to original size before scaling
+        Vector3 targetScale = originalNuclearScale * scaleUpSize;
+        while (nuclearIndicator.transform.localScale != targetScale)
+        {
+            nuclearIndicator.transform.localScale = Vector3.MoveTowards(nuclearIndicator.transform.localScale, targetScale, Time.deltaTime * scaleSpeed);
+            yield return null;
+        }
+        nuclearIndicator.transform.localScale = originalNuclearScale; // Reset to original size before scaling
+        nuclearIndicator.SetActive(false);
+        isNuclearActive = false;
+
     }
     private void OnCollisionEnter(Collision collision) // we use the collision when we want to change physics
     {
@@ -88,7 +127,6 @@ public class PlayerController : MonoBehaviour
             Rigidbody enemyRb = collision.gameObject.GetComponent<Rigidbody>();//to get the rigid body of the enemy that we collided with
             Vector3 awayFromThePlayer= (collision.gameObject.transform.position - transform.position);
             enemyRb.AddForce(awayFromThePlayer * powerupStrength , ForceMode.Impulse); // to apply the force imediatly
-            Debug.Log("Collides with: "+ collision.gameObject.name + " power up is set to " + hasPowerup);
         }
         if (collision.gameObject.CompareTag("Ground"))
         {
