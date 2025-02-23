@@ -41,6 +41,10 @@ public class PlayerController : MonoBehaviour
     private float scaleUpSize = 20f; // The target size multiplier
     private float scaleSpeed = 120f; // The speed of scaling
     public bool isNuclearActive = false;
+    [SerializeField] private ParticleSystem playerThunderEffect;
+    [SerializeField] private AudioClip playerThunderAudio;
+    [SerializeField] public AudioSource playerAudio;
+    [SerializeField] private AudioClip nuclearSoundEffect;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -51,6 +55,7 @@ public class PlayerController : MonoBehaviour
         restartButton.onClick.AddListener(RestartGame); // to restart the game
         spawnManagerScript = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         originalNuclearScale = nuclearIndicator.transform.localScale; // to store the initial scale
+        playerAudio = gameObject.GetComponent<AudioSource>(); // to be able to play the clips
 
 
     }
@@ -108,6 +113,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator ScaleUpIndicator() //for increasing the size of the indicator
     {
         nuclearIndicator.SetActive(true);
+        playerAudio.PlayOneShot(nuclearSoundEffect, 0.5f);
         nuclearIndicator.transform.localScale = originalNuclearScale; // Reset to original size before scaling
         Vector3 targetScale = originalNuclearScale * scaleUpSize;
         while (nuclearIndicator.transform.localScale != targetScale)
@@ -156,6 +162,8 @@ public class PlayerController : MonoBehaviour
             userNameTextArea.gameObject.SetActive(false);
             userNameErrorMessage.gameObject.SetActive(false);
             exitGameButton.gameObject.SetActive(false);
+            playerThunderEffect.Play();
+            playerAudio.PlayOneShot(playerThunderAudio, 0.5f);
         }
         else
         {

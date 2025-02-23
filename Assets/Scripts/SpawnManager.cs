@@ -13,8 +13,9 @@ public class SpawnManager : MonoBehaviour
     private float timeTogenerateNuclear = 0;
     private bool canSpawn = true; // Controls whether enemies can spawn
     private PlayerController playerControllerScript;
-    
-    
+    [SerializeField] private AudioClip enemyThunderAudio;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,6 +39,7 @@ public class SpawnManager : MonoBehaviour
             waveNumber++; // increase the enemies
             SpawnEnemyWave(waveNumber); //spawn the enemies based on the wave number
             Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate power up for each wave.
+            playerControllerScript.playerAudio.PlayOneShot(enemyThunderAudio, 0.5f); // to get the thunder sound
         }
         else if (enemeyCount > 6 && playerControllerScript.isGameActive && timeTogenerateNuclear > 30.0 && canSpawn)
         {
