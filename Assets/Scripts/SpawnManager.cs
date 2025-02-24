@@ -11,6 +11,7 @@ public class SpawnManager : MonoBehaviour
     public int waveNumber; // to keep track of the waves
     public int bossToSpawn;
     private float timeTogenerateNuclear = 0;
+    private float timeForNextNuclear = 30.0f;
     private bool canSpawn = true; // Controls whether enemies can spawn
     private PlayerController playerControllerScript;
     [SerializeField] private AudioClip enemyThunderAudio;
@@ -36,22 +37,24 @@ public class SpawnManager : MonoBehaviour
         }
         if (enemeyCount == 0 && playerControllerScript.isGameActive && canSpawn) // no enemies left in the battle
         {
+           
             waveNumber++; // increase the enemies
             SpawnEnemyWave(waveNumber); //spawn the enemies based on the wave number
             Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate power up for each wave.
             playerControllerScript.playerAudio.PlayOneShot(enemyThunderAudio, 0.5f); // to get the thunder sound
         }
-        else if (enemeyCount > 6 && playerControllerScript.isGameActive && timeTogenerateNuclear > 30.0 && canSpawn)
+        else if (enemeyCount > 6 && playerControllerScript.isGameActive && timeTogenerateNuclear > timeForNextNuclear && canSpawn)
         {
             timeTogenerateNuclear = 0;
-            Instantiate(nuclearPrefab, GenerateSpawnPosition(), nuclearPrefab.transform.rotation); // to generate a power up
+            timeForNextNuclear += 10;
+            Instantiate(nuclearPrefab, GenerateSpawnPosition(), nuclearPrefab.transform.rotation); // to generate a nuclear powerup
             
         }
     }
     IEnumerator WaitNuclearActive()
     {
         canSpawn = false;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3);
         canSpawn = true;
     }
     private Vector3 GenerateSpawnPosition()
