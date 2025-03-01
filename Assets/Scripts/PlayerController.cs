@@ -14,7 +14,7 @@ using UnityEditor;
 
 public class PlayerController : MonoBehaviour
 {
-    private float speed = 4.0f;
+    private float speed = 4000.0f;
     private Rigidbody playerRb;
     private GameObject focalPoint; // to get a reference for the focal point
     public bool hasPowerup = false; // to check when it collides 
@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     public GameObject powerupIndicator; // to get a reference
     public GameObject nuclearIndicator; // to get the nuclear reference
     private Vector3 offsetIndicator = new Vector3(0,-0.5f,0); // to move the indicator down a little
-    private float jumpStrength = 5.0f;
+    private float jumpStrength = 1000.0f;
     private float limitY = -4.0f;
     public bool isOnGround = true;
     private SpawnManager spawnManagerScript;
@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip playerThunderAudio;
     [SerializeField] public AudioSource playerAudio;
     [SerializeField] private AudioClip nuclearSoundEffect;
+    [SerializeField] private AudioClip powerupSoundEffect;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -66,11 +67,11 @@ public class PlayerController : MonoBehaviour
         if (isGameActive)
         {
             float verticalInput = Input.GetAxis("Vertical");
-            playerRb.AddForce(focalPoint.transform.forward * speed * verticalInput);// take the forward of the focal point will make sure that the player will move according to the camer position
+            playerRb.AddForce(focalPoint.transform.forward * speed * verticalInput*Time.deltaTime);// take the forward of the focal point will make sure that the player will move according to the camer position
             powerupIndicator.transform.position = transform.position + offsetIndicator; // to make the indicator on the player
             if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
             {
-                playerRb.AddForce(focalPoint.transform.up * jumpStrength, ForceMode.Impulse);
+                playerRb.AddForce(focalPoint.transform.up * jumpStrength*Time.deltaTime, ForceMode.Impulse);
                 isOnGround = false;
             }
             if (transform.position.y < limitY)
@@ -88,6 +89,7 @@ public class PlayerController : MonoBehaviour
         {
             hasPowerup = true; // trun on the Powerup boolean
             powerupIndicator.SetActive(true); // to show the powerup Indicator
+            playerAudio.PlayOneShot(powerupSoundEffect, 1.0f);//to show the sound of getting the powerup
             Destroy(other.gameObject);
             StartCoroutine(PowerUpCountDownRoutine());// to start the thread, useful to get the time out of update method
         }
