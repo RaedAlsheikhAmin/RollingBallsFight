@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 734de23a6cf7db94282ae84f2a080708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1.2
+  speed: 2
   thundEffect: {fileID: 8994794365338997794}
 --- !u!114 &7751142270946689851
 MonoBehaviour:

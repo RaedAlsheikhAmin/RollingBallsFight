@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 734de23a6cf7db94282ae84f2a080708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1.6
+  speed: 3
   thundEffect: {fileID: 2873375727558441569}
 --- !u!1001 &5881392884925445778
 PrefabInstance:

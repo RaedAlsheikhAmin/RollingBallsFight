@@ -14,7 +14,7 @@ using UnityEditor;
 
 public class PlayerController : MonoBehaviour
 {
-    private float speed = 4.0f;
+    private float speed = 6.0f;
     private Rigidbody playerRb;
     private GameObject focalPoint; // to get a reference for the focal point
     public bool hasPowerup = false; // to check when it collides 
