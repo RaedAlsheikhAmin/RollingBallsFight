@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_InputField userNameTextArea; // to get the input from the text area
     [SerializeField] private TextMeshProUGUI userNameShowText;
     [SerializeField] private TextMeshProUGUI userNameErrorMessage;
-    [SerializeField] private Button exitGameButton;
+    [SerializeField] public Button exitGameButton; // i made it public that pausemanager can access it
     private Vector3 originalNuclearScale; //for the nuclear size
     private float scaleUpSize = 20f; // The target size multiplier
     private float scaleSpeed = 120f; // The speed of scaling
