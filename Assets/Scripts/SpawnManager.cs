@@ -15,6 +15,7 @@ public class SpawnManager : MonoBehaviour
     private bool canSpawn = true; // Controls whether enemies can spawn
     private PlayerController playerControllerScript;
     [SerializeField] private AudioClip enemyThunderAudio;
+    private bool breakBetweenWaves;
 
 
 
@@ -35,13 +36,11 @@ public class SpawnManager : MonoBehaviour
         {
             StartCoroutine(WaitNuclearActive()); // Pause spawning when nuclear is active
         }
-        if (enemeyCount == 0 && playerControllerScript.isGameActive && canSpawn) // no enemies left in the battle
+        if (enemeyCount == 0 && playerControllerScript.isGameActive && canSpawn && !breakBetweenWaves) // no enemies left in the battle
         {
-           
-            waveNumber++; // increase the enemies
-            SpawnEnemyWave(waveNumber); //spawn the enemies based on the wave number
-            Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate power up for each wave.
-            playerControllerScript.playerAudio.PlayOneShot(enemyThunderAudio, 0.5f); // to get the thunder sound
+            breakBetweenWaves = true;
+            StartCoroutine(BreakBetweenWaves());
+            
         }
         else if (enemeyCount > 6 && playerControllerScript.isGameActive && timeTogenerateNuclear > timeForNextNuclear && canSpawn)
         {
@@ -50,6 +49,15 @@ public class SpawnManager : MonoBehaviour
             Instantiate(nuclearPrefab, GenerateSpawnPosition(), nuclearPrefab.transform.rotation); // to generate a nuclear powerup
             
         }
+    }
+    IEnumerator BreakBetweenWaves()//this will spawn the enemeies after few break time
+    {
+        yield return new WaitForSeconds(Random.Range(1,4));
+        breakBetweenWaves=false;
+        waveNumber++; // increase the enemies
+        SpawnEnemyWave(waveNumber); //spawn the enemies based on the wave number
+        Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation); // to generate power up for each wave.
+        playerControllerScript.playerAudio.PlayOneShot(enemyThunderAudio, 0.5f); // to get the thunder sound
     }
     IEnumerator WaitNuclearActive()
     {
